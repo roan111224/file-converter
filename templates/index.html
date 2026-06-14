@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Converter</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>File Converter</h1>
+
+    <p class="subtitle">
+        Convert PNG, JPG and WEBP files instantly
+    </p>
+
+    <form action="/convert" method="POST" enctype="multipart/form-data">
+
+        <!-- Upload Area -->
+        <div class="upload-box" id="drop-area">
+
+            <input
+                type="file"
+                name="file"
+                id="file"
+                accept="image/*"
+                required
+            >
+
+            <label for="file" id="upload-label">
+                📁 Drag & Drop File Here
+                <br>
+                <span>or click to browse</span>
+            </label>
+
+        </div>
+
+        <!-- Image Preview -->
+        <div id="preview-container">
+            <img id="preview-image" src="" alt="Preview">
+        </div>
+
+        <!-- Format Dropdown -->
+        <select name="format" required>
+            <option value="PNG">PNG</option>
+            <option value="JPG">JPG</option>
+            <option value="WEBP">WEBP</option>
+        </select>
+
+        <!-- Convert Button -->
+        <button type="submit">
+            Convert File
+        </button>
+
+    </form>
+
+</div>
+
+<script>
+
+const dropArea = document.getElementById("drop-area");
+const fileInput = document.getElementById("file");
+const uploadLabel = document.getElementById("upload-label");
+
+const previewContainer =
+    document.getElementById("preview-container");
+
+const previewImage =
+    document.getElementById("preview-image");
+
+function showPreview(file){
+
+    uploadLabel.innerHTML =
+        "✅ " + file.name +
+        "<br><span>Ready to convert</span>";
+
+    if(file.type.startsWith("image/")){
+
+        const reader = new FileReader();
+
+        reader.onload = function(e){
+
+            previewImage.src = e.target.result;
+
+            previewContainer.style.display = "block";
+
+        };
+
+        reader.readAsDataURL(file);
+    }
+}
+
+fileInput.addEventListener("change", () => {
+
+    if(fileInput.files.length > 0){
+
+        showPreview(fileInput.files[0]);
+
+    }
+
+});
+
+dropArea.addEventListener("dragover", (e) => {
+
+    e.preventDefault();
+
+    dropArea.classList.add("drag-active");
+
+});
+
+dropArea.addEventListener("dragleave", () => {
+
+    dropArea.classList.remove("drag-active");
+
+});
+
+dropArea.addEventListener("drop", (e) => {
+
+    e.preventDefault();
+
+    dropArea.classList.remove("drag-active");
+
+    const file = e.dataTransfer.files[0];
+
+    fileInput.files = e.dataTransfer.files;
+
+    showPreview(file);
+
+});
+
+</script>
+
+</body>
+</html>

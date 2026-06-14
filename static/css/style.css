@@ -1,0 +1,181 @@
+/* =====================================
+   GLOBAL STYLES
+===================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #dfe9f3, #ffffff);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* =====================================
+   MAIN CARD
+===================================== */
+
+.container {
+    background: white;
+    width: 500px;
+    max-width: 100%;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+/* =====================================
+   HEADINGS
+===================================== */
+
+h1 {
+    color: #111827;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #6b7280;
+    margin-bottom: 25px;
+}
+
+/* =====================================
+   UPLOAD BOX
+===================================== */
+
+.upload-box {
+    border: 2px dashed #3b82f6;
+    border-radius: 10px;
+    padding: 40px 20px;
+    background: #f8fbff;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.upload-box:hover {
+    background: #eef6ff;
+}
+
+.upload-box input {
+    display: none;
+}
+
+.upload-box label {
+    cursor: pointer;
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+.upload-box span {
+    display: block;
+    margin-top: 8px;
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: normal;
+}
+
+/* =====================================
+   DRAG ACTIVE EFFECT
+===================================== */
+
+.drag-active {
+    background: #dbeafe;
+    border-color: #2563eb;
+    transform: scale(1.02);
+}
+
+/* =====================================
+   IMAGE PREVIEW
+===================================== */
+
+#preview-container {
+    display: none;
+    margin: 20px 0;
+}
+
+#preview-image {
+    width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* =====================================
+   DROPDOWN
+===================================== */
+
+select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+}
+
+/* =====================================
+   BUTTON
+===================================== */
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+/* =====================================
+   LINKS
+===================================== */
+
+a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* =====================================
+   MOBILE
+===================================== */
+
+@media (max-width: 600px) {
+
+    .container {
+        width: 100%;
+        padding: 25px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    button {
+        font-size: 16px;
+    }
+
+}
