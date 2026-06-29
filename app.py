@@ -1,15 +1,20 @@
 from flask import Flask, render_template, request, send_from_directory
-from PIL import Image
+from converters.image_converter import convert_image
+from converters.document_converter import convert_document
+from converters.audio_converter import convert_audio
 import os
 import uuid
 
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "uploads"
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+CONVERTED_FOLDER = "converted"
 
-# Create uploads folder if it doesn't exist
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["CONVERTED_FOLDER"] = CONVERTED_FOLDER
+
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(CONVERTED_FOLDER, exist_ok=True)
 
 
 @app.route("/")
@@ -28,45 +33,122 @@ def convert():
     if file.filename == "":
         return "No file selected"
 
-    # Get selected format
     target_format = request.form["format"].upper()
 
-    # Generate unique filename
     unique_id = str(uuid.uuid4())
 
-    input_filename = f"{unique_id}_{file.filename}"
+    filename = unique_id + "_" + file.filename
+
     input_path = os.path.join(
         app.config["UPLOAD_FOLDER"],
-        input_filename
+        filename
     )
 
     file.save(input_path)
 
-    # Open image
-    image = Image.open(input_path)
+    extension = os.path.splitext(filename)[1].lower()
 
-    # Pillow uses JPEG, not JPG
-    if target_format == "JPG":
-        save_format = "JPEG"
-        extension = "jpg"
+    image_extensions = [
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".webp",
+        ".pdf"
+    ]
+
+    document_extensions = [
+        ".doc",
+        ".docx",
+        ".odt",
+        ".rtf",
+        ".txt",
+        ".ppt",
+        ".pptx",
+        ".odp",
+        ".xls",
+        ".xlsx",
+        ".ods"
+    ]
+
+    audio_extensions = [
+        ".mp3",
+        ".wav",
+        ".flac",
+        ".ogg",
+        ".aac",
+        ".m4a",
+        ".wma",
+        ".aiff"
+    ]
+
+    # -----------------------------
+    # IMAGE CONVERTER
+    # -----------------------------
+    if extension in image_extensions:
+
+        output_extension = target_format.lower()
+
+        if target_format == "JPG":
+            output_extension = "jpg"
+
+        output_filename = (
+            unique_id +
+            "_converted." +
+            output_extension
+        )
+
+        output_path = os.path.join(
+            app.config["CONVERTED_FOLDER"],
+            output_filename
+        )
+
+        convert_image(
+            input_path,
+            output_path,
+            target_format
+        )
+
+    # -----------------------------
+    # DOCUMENT CONVERTER
+    # -----------------------------
+    elif extension in document_extensions:
+
+        if target_format != "PDF":
+            return "Document files can currently be converted only to PDF."
+
+        output_path = convert_document(
+            input_path,
+            app.config["CONVERTED_FOLDER"]
+        )
+
+        output_filename = os.path.basename(output_path)
+
+    # -----------------------------
+    # AUDIO CONVERTER
+    # -----------------------------
+    elif extension in audio_extensions:
+
+        output_extension = target_format.lower()
+
+        output_filename = (
+            unique_id +
+            "_converted." +
+            output_extension
+        )
+
+        output_path = os.path.join(
+            app.config["CONVERTED_FOLDER"],
+            output_filename
+        )
+
+        convert_audio(
+            input_path,
+            output_path
+        )
+
     else:
-        save_format = target_format
-        extension = target_format.lower()
 
-    # JPEG cannot save transparency
-    if save_format == "JPEG":
-        image = image.convert("RGB")
-
-    output_filename = (
-        f"{unique_id}_converted.{extension}"
-    )
-
-    output_path = os.path.join(
-        app.config["UPLOAD_FOLDER"],
-        output_filename
-    )
-
-    image.save(output_path, save_format)
+        return "Unsupported file type."
 
     return render_template(
         "result.html",
@@ -78,7 +160,7 @@ def convert():
 def download_file(filename):
 
     return send_from_directory(
-        app.config["UPLOAD_FOLDER"],
+        app.config["CONVERTED_FOLDER"],
         filename,
         as_attachment=True
     )
